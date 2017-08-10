@@ -1,13 +1,13 @@
 package reinforcement_learning
 
 import org.scalatest.{FlatSpec, Matchers}
-import reinforcement_learning.games.{Action, GridWorldGame}
+import reinforcement_learning.environments.{Action, GridWorldEnvironment}
 
 class DynamicProgrammingSpec extends FlatSpec with Matchers {
   "DynamicProgramming" should "execute iterativePolicyEvaluation correctly" in {
-    val game = GridWorldGame(4, 4)
+    val environment = GridWorldEnvironment(4, 4)
     val values = DynamicProgramming.iterativePolicyEvaluation[Int, Action.Value](
-      game,
+      environment,
       _ => Action.values.map(_ -> 1.0 / Action.values.size).toMap,
       1.0,
       0.01

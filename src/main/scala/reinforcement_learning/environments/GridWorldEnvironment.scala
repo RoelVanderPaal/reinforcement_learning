@@ -1,12 +1,12 @@
-package reinforcement_learning.games
+package reinforcement_learning.environments
 
-import reinforcement_learning.Game
+import reinforcement_learning.Environment
 
 object Action extends Enumeration {
   val Up, Down, Left, Right = Value
 }
 
-case class GridWorldGame(rowSize: Int, colSize: Int) extends Game[Int, Action.Value] {
+case class GridWorldEnvironment(rowSize: Int, colSize: Int) extends Environment[Int, Action.Value] {
   val actions = List(Action.Up, Action.Down, Action.Left, Action.Right)
 
   val size = rowSize * colSize

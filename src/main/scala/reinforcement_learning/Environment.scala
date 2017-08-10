@@ -1,7 +1,7 @@
 package reinforcement_learning
 
 
-trait Game[State, Action] {
+trait Environment[State, Action] {
   type Probability = Double
   type Reward = Double
 
