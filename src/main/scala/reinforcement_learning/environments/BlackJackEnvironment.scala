@@ -4,7 +4,7 @@ import reinforcement_learning.{Environment, Reward}
 
 import scala.collection.mutable.ListBuffer
 
-case class BlackJackState(currentSum: Int, useableAce: Boolean, dealersShowingCard: Int)
+case class BlackJackState(currentSum: Int, useableAce: Boolean, dealerShowingCard: Int)
 
 object BlackJackAction extends Enumeration {
   val Hit, Stick = Value
@@ -12,7 +12,7 @@ object BlackJackAction extends Enumeration {
 
 import BlackJackAction._
 
-case class BlackJackEnvironment() extends Environment[BlackJackState, BlackJackAction.Value] {
+case class BlackJackEnvironment()(implicit randomGenerator: IntGenerator = new RandomIntGeneratorImpl()) extends Environment[BlackJackState, BlackJackAction.Value] {
   type Hand = Traversable[Int]
   var player = ListBuffer[Int]()
   var dealer = ListBuffer[Int]()
@@ -44,10 +44,8 @@ case class BlackJackEnvironment() extends Environment[BlackJackState, BlackJackA
     (getState, done, reward)
   }
 
-  val r = scala.util.Random
-
   private def drawCard = {
-    (r.nextInt(13) + 1) match {
+    (randomGenerator.nextInt(13) + 1) match {
       case x if x > 10 => 10
       case x => x
     }
