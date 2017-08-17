@@ -17,6 +17,8 @@ case class BlackJackEnvironment()(implicit randomGenerator: IntGenerator = new R
   var player = ListBuffer[Int]()
   var dealer = ListBuffer[Int]()
 
+  override def possibleActions(state: BlackJackState): Set[BlackJackAction.Value] = BlackJackAction.values
+
   override def initialState: BlackJackState = {
     player.clear()
     dealer.clear()
