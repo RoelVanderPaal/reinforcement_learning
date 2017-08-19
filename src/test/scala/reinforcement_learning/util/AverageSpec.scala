@@ -4,7 +4,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class AverageSpec extends FlatSpec with Matchers {
   "Average" should "initialize correctly" in {
-    Average() should be(Average(0, 0))
+    Average() should be(Average())
   }
   it should "add a value correctly" in {
     Average() + 1 should be(Average(1, 1))

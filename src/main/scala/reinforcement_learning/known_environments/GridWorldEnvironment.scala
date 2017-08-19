@@ -32,5 +32,5 @@ case class GridWorldEnvironment(rowSize: Int, colSize: Int) extends KnownEnviron
 
   override def reward(oldState: Int, newState: Int, a: GridWorldAction.Value): Double = -1
 
-  override def possibleActions(state: Int) = GridWorldAction.values.toList
+  override def possibleActions(state: Int): Set[GridWorldAction.Value] = GridWorldAction.values
 }

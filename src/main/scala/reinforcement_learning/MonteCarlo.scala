@@ -13,7 +13,7 @@ object MonteCarlo {
                                                      iterations: Int
                                                    ): Map[State, Probability] = {
     var valuePerState = mutable.Map[State, Average]()
-    for (n <- 1 to iterations) {
+    for (_ <- 1 to iterations) {
       var state = environment.initialState
       val accumulatedRewardPerState = mutable.Map[State, Reward]()
       var done = false
@@ -24,25 +24,24 @@ object MonteCarlo {
         state = newState
         done = newDone
       } while (!done)
-      for (state <- accumulatedRewardPerState.keys) {
+      for ((state, reward) <- accumulatedRewardPerState) {
         val value = valuePerState.getOrElseUpdate(state, Average())
-        valuePerState(state) = value + accumulatedRewardPerState(state)
+        valuePerState(state) = value + reward
       }
     }
     valuePerState.mapValues(_.avg).toMap
   }
 
-  def ES[State, Action](environment: Environment[State, Action], iterations: Int): (collection.Map[State, Action], collection.Map[(State, Action), Average]) = {
+  def ES[State, Action](environment: Environment[State, Action], iterations: Int): (collection.Map[State, Action], collection.Map[State, collection.Map[Action, Average]]) = {
     def randomAction(state: State) = {
       val actions = environment.possibleActions(state)
       actions.toList(Random.nextInt(actions.size))
     }
 
     var policy = mutable.Map[State, Action]()
-    // TODO use nested map to improve performance
-    var valuePerStateAndAction = mutable.Map[(State, Action), Average]()
+    var valuePerStateAndAction = mutable.Map[State, mutable.Map[Action, Average]]()
 
-    for (n <- 1 to iterations) {
+    for (_ <- 1 to iterations) {
       val accumulatedRewardPerStateAndAction = mutable.Map[(State, Action), Reward]()
       var state = environment.initialState
       var action = randomAction(state)
@@ -57,15 +56,13 @@ object MonteCarlo {
           action = policy.getOrElseUpdate(state, randomAction(state))
         }
       }
-      for (stateAndAction <- accumulatedRewardPerStateAndAction.keys) {
-        val value = valuePerStateAndAction.getOrElseUpdate(stateAndAction, Average())
-        valuePerStateAndAction(stateAndAction) = value + accumulatedRewardPerStateAndAction(stateAndAction)
-      }
-      for (group <- valuePerStateAndAction.groupBy { case ((s, _), _) => s }) {
-        val (state, v) = group
-        policy(state) = ArgMax.argMax(v).get._2
+      for (((state, action), reward) <- accumulatedRewardPerStateAndAction) {
+        val actionToAverage = valuePerStateAndAction.getOrElseUpdate(state, mutable.Map[Action, Average]())
+        actionToAverage(action) = actionToAverage.getOrElseUpdate(action, Average()) + reward
+        policy(state) = ArgMax.argMax(actionToAverage).get
       }
     }
+
     (policy, valuePerStateAndAction)
   }
 

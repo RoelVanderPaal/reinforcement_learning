@@ -10,5 +10,5 @@ trait KnownEnvironment[State, Action] {
 
   def reward(oldState: State, newState: State, a: Action): Reward
 
-  def possibleActions(state: State): List[Action]
+  def possibleActions(state: State): Set[Action]
 }

@@ -13,7 +13,7 @@ class DynamicProgrammingSpec extends FlatSpec with Matchers {
     values.toList.sortBy(_._1).map(_._2).map(math.round) should be(expected)
   }
   it should "execute valueIteration correctly for GamblersProblem" in {
-    val environment = new GamblersProblemEnvironment(0.4)
-    val values = DynamicProgramming.valueIteration(environment, 1.0, 0.01)
+    val environment = GamblersProblemEnvironment(0.4)
+    DynamicProgramming.valueIteration(environment, 1.0, 0.01)
   }
 }

@@ -1,5 +1,6 @@
 package reinforcement_learning.environments
 
+import reinforcement_learning.util.{IntGenerator, RandomIntGeneratorImpl}
 import reinforcement_learning.{Environment, Reward}
 
 import scala.collection.mutable.ListBuffer
@@ -14,8 +15,8 @@ import BlackJackAction._
 
 case class BlackJackEnvironment()(implicit randomGenerator: IntGenerator = new RandomIntGeneratorImpl()) extends Environment[BlackJackState, BlackJackAction.Value] {
   type Hand = Traversable[Int]
-  var player = ListBuffer[Int]()
-  var dealer = ListBuffer[Int]()
+  private var player = ListBuffer[Int]()
+  private var dealer = ListBuffer[Int]()
 
   override def possibleActions(state: BlackJackState): Set[BlackJackAction.Value] = BlackJackAction.values
 
@@ -47,13 +48,13 @@ case class BlackJackEnvironment()(implicit randomGenerator: IntGenerator = new R
   }
 
   private def drawCard = {
-    (randomGenerator.nextInt(13) + 1) match {
+    randomGenerator.nextInt(13) + 1 match {
       case x if x > 10 => 10
       case x => x
     }
   }
 
-  private def getState = BlackJackState(sum(player), usableAce(player), dealer(0))
+  private def getState = BlackJackState(sum(player), usableAce(player), dealer.head)
 
   private def usableAce(hand: Hand) = hand.exists(_ == 1) && hand.sum + 10 <= 21
 

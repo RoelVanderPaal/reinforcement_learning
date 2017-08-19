@@ -11,5 +11,5 @@ case class GamblersProblemEnvironment(probability_head: Double) extends KnownEnv
 
   override def reward(oldState: Int, newState: Int, a: Int): Reward = if (newState == 100) 1 else 0
 
-  override def possibleActions(state: Int) = (0 to math.min(state, 100 - state)).toList
+  override def possibleActions(state: Int): Set[Int] = (0 to math.min(state, 100 - state)).toSet
 }
