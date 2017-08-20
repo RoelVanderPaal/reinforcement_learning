@@ -2,7 +2,7 @@ package reinforcement_learning
 
 import org.scalatest.{FlatSpec, Matchers}
 import reinforcement_learning.environments.BlackJackAction._
-import reinforcement_learning.environments.{BlackJackEnvironment, BlackJackState}
+import reinforcement_learning.environments.{BlackJackEnvironment, BlackJackState, RandomWalkEnvironment}
 import reinforcement_learning.known_environments.{GridWorldAction, GridWorldEnvironment}
 
 import scala.util.Random
@@ -47,19 +47,22 @@ class MonteCarloSpec extends FlatSpec with Matchers {
 
   it should "execute ES" in {
     val environment = BlackJackEnvironment()
-    val (policy, _) = MonteCarlo.control(environment, 500000, 0.2)
+    val (policy, _) = MonteCarlo.control(environment, 10, 0.2)
 
-    for (g <- policy.groupBy { case (BlackJackState(_, v, _), _) => v }) {
-      val (usableAce, m) = g
-      println(usableAce)
-      for (groupedByCurrentSum <- m.groupBy { case (BlackJackState(c, _, _), _) => c }.toSeq.sortBy(_._1).reverse) {
-        val sortedByDealersHand = groupedByCurrentSum._2.toSeq.sortBy { case (BlackJackState(_, _, d), _) => d }
-        val actionsString = sortedByDealersHand.map(_._2).map {
-          case Stick => "s"
-          case Hit => " "
-        }.mkString(" ")
-        println(s"${groupedByCurrentSum._1}: $actionsString")
-      }
-    }
+    //    for (g <- policy.groupBy { case (BlackJackState(_, v, _), _) => v }) {
+    //      val (usableAce, m) = g
+    //      println(usableAce)
+    //      for (groupedByCurrentSum <- m.groupBy { case (BlackJackState(c, _, _), _) => c }.toSeq.sortBy(_._1).reverse) {
+    //        val sortedByDealersHand = groupedByCurrentSum._2.toSeq.sortBy { case (BlackJackState(_, _, d), _) => d }
+    //        val actionsString = sortedByDealersHand.map(_._2).map {
+    //          case Stick => "s"
+    //          case Hit => " "
+    //        }.mkString(" ")
+    //        println(s"${groupedByCurrentSum._1}: $actionsString")
+    //      }
+    //    }
+  }
+  it should "execute value state on random walk" in {
+    val randomWalk = RandomWalkEnvironment()
   }
 }
