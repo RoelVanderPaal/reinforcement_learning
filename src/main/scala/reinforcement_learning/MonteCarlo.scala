@@ -32,7 +32,11 @@ object MonteCarlo {
     valuePerState.mapValues(_.avg).toMap
   }
 
-  def ES[State, Action](environment: Environment[State, Action], iterations: Int): (collection.Map[State, Action], collection.Map[State, collection.Map[Action, Average]]) = {
+  def control[State, Action](
+                         environment: Environment[State, Action],
+                         iterations: Int,
+                         randomActionProbability: Probability = 0.0):
+  (collection.Map[State, Action], collection.Map[State, collection.Map[Action, Average]]) = {
     def randomAction(state: State) = {
       val actions = environment.possibleActions(state)
       actions.toList(Random.nextInt(actions.size))

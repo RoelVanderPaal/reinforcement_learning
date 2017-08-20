@@ -1,6 +1,6 @@
 package reinforcement_learning.environments
 
-import reinforcement_learning.util.{IntGenerator, RandomIntGeneratorImpl}
+import reinforcement_learning.util.{RandomUtil, RandomUtilImpl}
 import reinforcement_learning.{Environment, Reward}
 
 import scala.collection.mutable.ListBuffer
@@ -13,7 +13,7 @@ object BlackJackAction extends Enumeration {
 
 import BlackJackAction._
 
-case class BlackJackEnvironment()(implicit randomGenerator: IntGenerator = new RandomIntGeneratorImpl()) extends Environment[BlackJackState, BlackJackAction.Value] {
+case class BlackJackEnvironment()(implicit randomGenerator: RandomUtil = new RandomUtilImpl()) extends Environment[BlackJackState, BlackJackAction.Value] {
   type Hand = Traversable[Int]
   private var player = ListBuffer[Int]()
   private var dealer = ListBuffer[Int]()

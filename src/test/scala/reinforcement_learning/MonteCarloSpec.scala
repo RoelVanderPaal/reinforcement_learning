@@ -47,7 +47,7 @@ class MonteCarloSpec extends FlatSpec with Matchers {
 
   it should "execute ES" in {
     val environment = BlackJackEnvironment()
-    val (policy, _) = MonteCarlo.ES(environment, 10)
+    val (policy, _) = MonteCarlo.control(environment, 10)
 
     //    for (g <- policy.groupBy { case (BlackJackState(_, v, _), _) => v }) {
     //      val (usableAce, m) = g
