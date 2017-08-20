@@ -10,12 +10,12 @@ object TemporalDifference {
                                  stepSize: Reward,
                                  iterations: Int
                                ): collection.Map[State, Reward] = {
-    var valuePerState = mutable.Map[State, Reward]()
+    val valuePerState = mutable.Map[State, Reward]()
     for (_ <- 1 to iterations) {
       var state = environment.initialState
       var done = false
       do {
-        var (newState, newDone, reward) = environment.nextState(policy(state))
+        val (newState, newDone, reward) = environment.nextState(policy(state))
         val oldValue = valuePerState.getOrElseUpdate(state, 0.0)
         val newValue = if (done) valuePerState.getOrElseUpdate(newState, 0.0) else 0.0
 

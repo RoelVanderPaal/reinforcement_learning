@@ -38,8 +38,8 @@ object MonteCarlo {
       actions.toList(Random.nextInt(actions.size))
     }
 
-    var policy = mutable.Map[State, Action]()
-    var valuePerStateAndAction = mutable.Map[State, mutable.Map[Action, Average]]()
+    val policy = mutable.Map[State, Action]()
+    val valuePerStateAndAction = mutable.Map[State, mutable.Map[Action, Average]]()
 
     for (_ <- 1 to iterations) {
       val accumulatedRewardPerStateAndAction = mutable.Map[(State, Action), Reward]()
