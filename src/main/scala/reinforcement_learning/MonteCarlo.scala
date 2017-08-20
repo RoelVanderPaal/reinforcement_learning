@@ -12,13 +12,13 @@ object MonteCarlo {
                                                      discountRate: Reward,
                                                      iterations: Int
                                                    ): Map[State, Probability] = {
-    var valuePerState = mutable.Map[State, Average]()
+    val valuePerState = mutable.Map[State, Average]()
     for (_ <- 1 to iterations) {
       var state = environment.initialState
       val accumulatedRewardPerState = mutable.Map[State, Reward]()
       var done = false
       do {
-        var (newState, newDone, reward) = environment.nextState(policy(state))
+        val (newState, newDone, reward) = environment.nextState(policy(state))
         accumulatedRewardPerState.getOrElseUpdate(state, 0.0)
         accumulatedRewardPerState.transform((_, v) => v + reward)
         state = newState
@@ -47,7 +47,7 @@ object MonteCarlo {
       var action = randomAction(state)
       var done = false
       while (!done) {
-        var (newState, newDone, reward) = environment.nextState(action)
+        val (newState, newDone, reward) = environment.nextState(action)
         accumulatedRewardPerStateAndAction.getOrElseUpdate((state, action), 0.0)
         accumulatedRewardPerStateAndAction.transform((_, v) => v + reward)
         state = newState
