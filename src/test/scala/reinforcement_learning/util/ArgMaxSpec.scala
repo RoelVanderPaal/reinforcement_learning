@@ -5,10 +5,10 @@ import org.scalatest.{FlatSpec, Matchers}
 class ArgMaxSpec extends FlatSpec with Matchers {
   "ArgMax" should "return argmax from a normal example" in {
     val m = Map("a" -> 1, "b" -> 2, "c" -> -1, "d" -> -2)
-    ArgMax.argMax(m) should be(Some("b"))
+    ArgMax.argMax(m) should be("d")
   }
   it should "not fail on empty map" in {
     val m = Map[String, Int]()
-    ArgMax.argMax(m) shouldBe None
+    an [UnsupportedOperationException] should be thrownBy ArgMax.argMax(m)
   }
 }

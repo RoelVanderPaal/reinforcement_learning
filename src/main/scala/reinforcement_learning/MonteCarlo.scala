@@ -72,7 +72,7 @@ object MonteCarlo {
       for (((state, action), reward) <- accumulatedRewardPerStateAndAction) {
         val actionToAverage = valuePerStateAndAction.getOrElseUpdate(state, mutable.Map[Action, Average]())
         actionToAverage(action) = actionToAverage.getOrElseUpdate(action, Average()) + reward
-        policy(state) = ArgMax.argMax(actionToAverage).get
+        policy(state) = ArgMax.argMax(actionToAverage)
       }
     }
 
