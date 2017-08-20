@@ -42,25 +42,24 @@ class MonteCarloSpec extends FlatSpec with Matchers {
       actions.toVector(Random.nextInt(actions.size))
     }, 1.0, 100)
     val expected = List(-14, -20, -22, -14, -18, -20, -20, -20, -20, -18, -14, -22, -20, -14)
-//    values.toList.sortBy(_._1).map(_._2).map(math.round) should be(expected)
+    //    values.toList.sortBy(_._1).map(_._2).map(math.round) should be(expected)
   }
 
   it should "execute ES" in {
     val environment = BlackJackEnvironment()
-    val (policy, _) = MonteCarlo.control(environment, 10)
+    val (policy, _) = MonteCarlo.control(environment, 500000, 0.2)
 
-    //    for (g <- policy.groupBy { case (BlackJackState(_, v, _), _) => v }) {
-    //      val (usableAce, m) = g
-    //      println(usableAce)
-    //      for (groupedByCurrentSum <- m.groupBy { case (BlackJackState(c, _, _), _) => c }.toSeq.sortBy(_._1).reverse) {
-    //        val sortedByDealersHand = groupedByCurrentSum._2.toSeq.sortBy { case (BlackJackState(_, _, d), _) => d }
-    //        val actionsString = sortedByDealersHand.map(_._2).map(_ match {
-    //          case Stick => "s"
-    //          case Hit => " "
-    //        }
-    //        ).mkString(" ")
-    //        println(s"${groupedByCurrentSum._1}: $actionsString")
-    //      }
-    //    }
+    for (g <- policy.groupBy { case (BlackJackState(_, v, _), _) => v }) {
+      val (usableAce, m) = g
+      println(usableAce)
+      for (groupedByCurrentSum <- m.groupBy { case (BlackJackState(c, _, _), _) => c }.toSeq.sortBy(_._1).reverse) {
+        val sortedByDealersHand = groupedByCurrentSum._2.toSeq.sortBy { case (BlackJackState(_, _, d), _) => d }
+        val actionsString = sortedByDealersHand.map(_._2).map {
+          case Stick => "s"
+          case Hit => " "
+        }.mkString(" ")
+        println(s"${groupedByCurrentSum._1}: $actionsString")
+      }
+    }
   }
 }

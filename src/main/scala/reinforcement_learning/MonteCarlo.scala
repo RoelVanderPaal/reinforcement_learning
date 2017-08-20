@@ -1,6 +1,6 @@
 package reinforcement_learning
 
-import reinforcement_learning.util.{ArgMax, Average}
+import reinforcement_learning.util.{ArgMax, Average, RandomUtil, RandomUtilImpl}
 
 import scala.collection.mutable
 import scala.util.Random
@@ -33,14 +33,12 @@ object MonteCarlo {
   }
 
   def control[State, Action](
-                         environment: Environment[State, Action],
-                         iterations: Int,
-                         randomActionProbability: Probability = 0.0):
+                              environment: Environment[State, Action],
+                              iterations: Int,
+                              randomActionProbability: Probability = 0.0)
+                            (implicit randomUtil: RandomUtil = new RandomUtilImpl()):
   (collection.Map[State, Action], collection.Map[State, collection.Map[Action, Average]]) = {
-    def randomAction(state: State) = {
-      val actions = environment.possibleActions(state)
-      actions.toList(Random.nextInt(actions.size))
-    }
+    def randomAction(state: State) = randomUtil.selectRandom(environment.possibleActions(state))
 
     val policy = mutable.Map[State, Action]()
     val valuePerStateAndAction = mutable.Map[State, mutable.Map[Action, Average]]()
@@ -57,7 +55,18 @@ object MonteCarlo {
         state = newState
         done = newDone
         if (!done) {
-          action = policy.getOrElseUpdate(state, randomAction(state))
+          val argMaxAction = policy.getOrElseUpdate(state, randomAction(state))
+          action = if (randomActionProbability > 0.0) {
+            val possibleActions = environment.possibleActions(state)
+            randomUtil.selectRandomWithProbability(possibleActions.map(a => a -> {
+              if (a == argMaxAction)
+                1 - randomActionProbability + randomActionProbability / possibleActions.size
+              else
+                randomActionProbability / possibleActions.size
+            }))
+          } else {
+            argMaxAction
+          }
         }
       }
       for (((state, action), reward) <- accumulatedRewardPerStateAndAction) {

@@ -7,5 +7,7 @@ class FixedRandomUtilImpl(values: Seq[Int]) extends RandomUtil {
 
   override def nextInt(n: Int): Int = iter.next()
 
-  override def selectRandom[K](m: Traversable[(K, Probability)]): K = ???
+  override def selectRandomWithProbability[K](m: Traversable[(K, Probability)]): K = ???
+
+  override def selectRandom[K](m: Traversable[K]): K = ???
 }

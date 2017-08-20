@@ -22,7 +22,7 @@ case class KnownEnvironmentWrapper[State, Action](knownEnvironment: KnownEnviron
 
   override def nextState(a: Action): (State, Boolean, Reward) = {
     val stateToProbability: Map[State, Probability] = knownEnvironment.stateProbabilities(state, a)
-    val newState = randomUtil.selectRandom(stateToProbability)
+    val newState = randomUtil.selectRandomWithProbability(stateToProbability)
     val done = !knownEnvironment.nonTerminalStates.contains(newState)
     state = newState
     (newState, done, knownEnvironment.reward(newState, newState, a))

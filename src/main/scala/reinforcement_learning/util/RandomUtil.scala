@@ -5,7 +5,9 @@ import reinforcement_learning.Probability
 trait RandomUtil {
   def nextInt(n: Int): Int
 
-  def selectRandom[K](m: Traversable[(K, Probability)]): K
+  def selectRandomWithProbability[K](m: Traversable[(K, Probability)]): K
+
+  def selectRandom[K](m: Traversable[K]): K
 }
 
 class RandomUtilImpl extends RandomUtil {
@@ -13,7 +15,7 @@ class RandomUtilImpl extends RandomUtil {
 
   override def nextInt(n: Int): Int = r.nextInt(n)
 
-  override def selectRandom[K](m: Traversable[(K, Probability)]): K = {
+  override def selectRandomWithProbability[K](m: Traversable[(K, Probability)]): K = {
     var acc = 0.0
     val choice = r.nextDouble()
     for ((k, v) <- m) {
@@ -24,4 +26,6 @@ class RandomUtilImpl extends RandomUtil {
     }
     throw new RuntimeException("sum of probabilities is not 1")
   }
+
+  override def selectRandom[K](m: Traversable[K]): K = m.toList(this.nextInt(m.size))
 }
