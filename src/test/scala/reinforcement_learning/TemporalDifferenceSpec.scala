@@ -5,6 +5,7 @@ import java.io.{BufferedWriter, File, FileWriter}
 import org.scalatest.{FlatSpec, Matchers}
 import reinforcement_learning.environments.BlackJackAction.{Hit, Stick}
 import reinforcement_learning.environments.{BlackJackEnvironment, BlackJackState, RandomWalkAction, RandomWalkEnvironment}
+import reinforcement_learning.known_environments.GridWorldEnvironment
 import reinforcement_learning.util.RandomUtilImpl
 
 class TemporalDifferenceSpec extends FlatSpec with Matchers {
@@ -35,5 +36,32 @@ class TemporalDifferenceSpec extends FlatSpec with Matchers {
     val environment = RandomWalkEnvironment()
     val policy = (s: Int) => new RandomUtilImpl().selectRandom(environment.possibleActions(s))
     val results = TemporalDifference.tabularTD0(environment, policy, 1.0, .1, 100, Some((1 to 5).map(i => i -> .5)))
+    //    println(results)
+  }
+  it should "execute SARSA on blackjack" in {
+    val environment = BlackJackEnvironment()
+    val policy = TemporalDifference.SARSA(environment, 0.1, 1.0, 0.5, 10)
+
+    //    for (g <- policy.groupBy { case (BlackJackState(_, v, _), _) => v }) {
+    //      val (usableAce, m) = g
+    //      println(usableAce)
+    //      for (groupedByCurrentSum <- m.groupBy { case (BlackJackState(c, _, _), _) => c }.toSeq.sortBy(_._1).reverse) {
+    //        val sortedByDealersHand = groupedByCurrentSum._2.toSeq.sortBy { case (BlackJackState(_, _, d), _) => d }
+    //        val actionsString = sortedByDealersHand.map(_._2).map {
+    //          case Stick => "s"
+    //          case Hit => " "
+    //        }.mkString(" ")
+    //        println(s"${groupedByCurrentSum._1}: $actionsString")
+    //      }
+    //    }
+  }
+  it should "execute SARSA on gridworld" in {
+    val rows = 5
+    val cols = 5
+    val environment = KnownEnvironmentWrapper(GridWorldEnvironment(rows, cols))
+    val policy = TemporalDifference.SARSA(environment, 0.1, 1.0, 0.5, 1000)
+
+    val str = (0 until rows).map { r => (0 until cols).map(c => r * cols + c).map(policy.getOrElse(_, "")).mkString("\t") }.mkString("\n")
+    println(str)
   }
 }

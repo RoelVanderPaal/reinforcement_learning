@@ -35,7 +35,7 @@ object MonteCarlo {
   def control[State, Action](
                               environment: Environment[State, Action],
                               iterations: Int,
-                              randomActionProbability: Probability = 0.0)
+                              epsilon: Probability = 0.0)
                             (implicit randomUtil: RandomUtil = new RandomUtilImpl()):
   (collection.Map[State, Action], collection.Map[State, collection.Map[Action, Average]]) = {
     def randomAction(state: State) = randomUtil.selectRandom(environment.possibleActions(state))
@@ -56,14 +56,8 @@ object MonteCarlo {
         done = newDone
         if (!done) {
           val argMaxAction = policy.getOrElseUpdate(state, randomAction(state))
-          action = if (randomActionProbability > 0.0) {
-            val possibleActions = environment.possibleActions(state)
-            randomUtil.selectRandomWithProbability(possibleActions.map(a => a -> {
-              if (a == argMaxAction)
-                1 - randomActionProbability + randomActionProbability / possibleActions.size
-              else
-                randomActionProbability / possibleActions.size
-            }))
+          action = if (epsilon > 0.0) {
+            Policy.eGreedyPolicy(environment.possibleActions(state), epsilon, argMaxAction)
           } else {
             argMaxAction
           }
