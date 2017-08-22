@@ -63,4 +63,34 @@ object TemporalDifference {
     stateActionValues.greedyPolicy
   }
 
+
+  def QLearning[State, Action](
+                                environment: Environment[State, Action],
+                                epsilon: Probability = 0.0,
+                                gamma: Reward,
+                                alpha: Reward,
+                                iterations: Int)
+                              (implicit randomUtil: RandomUtil = new RandomUtilImpl()): collection.Map[State, Action] = {
+    val stateActionValues = new StateActionValues[State, Action]()
+
+    for (_ <- 1 to iterations) {
+      var state = environment.initialState
+      var done = false
+      while (!done) {
+        val action = stateActionValues.eGreedyAction(state, environment.possibleActions(state), epsilon)
+        val (newState, newDone, reward) = environment.nextState(action)
+        stateActionValues.adjust(state, action)(v => {
+          val newStateValue = if (newDone) 0.0 else gamma * stateActionValues.maxReward(newState)
+          //            println(state, action, newState, reward, newStateValue, v, reward + newStateValue - v)
+          v + alpha * (reward + newStateValue - v)
+        })
+        state = newState
+        done = newDone
+      }
+      //      println("done")
+    }
+    //            println(stateActionValues.rewards)
+    stateActionValues.greedyPolicy
+  }
+
 }

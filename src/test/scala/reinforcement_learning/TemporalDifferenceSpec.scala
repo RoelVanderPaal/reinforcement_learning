@@ -4,7 +4,7 @@ import java.io.{BufferedWriter, File, FileWriter}
 
 import org.scalatest.{FlatSpec, Matchers}
 import reinforcement_learning.environments.BlackJackAction.{Hit, Stick}
-import reinforcement_learning.environments.{BlackJackEnvironment, BlackJackState, RandomWalkAction, RandomWalkEnvironment}
+import reinforcement_learning.environments._
 import reinforcement_learning.known_environments.GridWorldEnvironment
 import reinforcement_learning.util.RandomUtilImpl
 
@@ -40,28 +40,58 @@ class TemporalDifferenceSpec extends FlatSpec with Matchers {
   }
   it should "execute SARSA on blackjack" in {
     val environment = BlackJackEnvironment()
-    val policy = TemporalDifference.SARSA(environment, 0.1, 1.0, 0.5, 10)
+    val policy = TemporalDifference.SARSA(environment, 0.1, 1.0, 0.1, 5000000)
 
-    //    for (g <- policy.groupBy { case (BlackJackState(_, v, _), _) => v }) {
-    //      val (usableAce, m) = g
-    //      println(usableAce)
-    //      for (groupedByCurrentSum <- m.groupBy { case (BlackJackState(c, _, _), _) => c }.toSeq.sortBy(_._1).reverse) {
-    //        val sortedByDealersHand = groupedByCurrentSum._2.toSeq.sortBy { case (BlackJackState(_, _, d), _) => d }
-    //        val actionsString = sortedByDealersHand.map(_._2).map {
-    //          case Stick => "s"
-    //          case Hit => " "
-    //        }.mkString(" ")
-    //        println(s"${groupedByCurrentSum._1}: $actionsString")
-    //      }
-    //    }
+    for (g <- policy.groupBy { case (BlackJackState(_, v, _), _) => v }) {
+      val (usableAce, m) = g
+      println(usableAce)
+      for (groupedByCurrentSum <- m.groupBy { case (BlackJackState(c, _, _), _) => c }.toSeq.sortBy(_._1).reverse) {
+        val sortedByDealersHand = groupedByCurrentSum._2.toSeq.sortBy { case (BlackJackState(_, _, d), _) => d }
+        val actionsString = sortedByDealersHand.map(_._2).map {
+          case Stick => "s"
+          case Hit => " "
+        }.mkString(" ")
+        println(s"${groupedByCurrentSum._1}: $actionsString")
+      }
+    }
+  }
+  it should "execute Q-learning on blackjack" in {
+
+    val environment = BlackJackEnvironment()
+    //    implicit val randomUtilImpl = new FixedRandomUtilImpl(List(0))
+    val policy = TemporalDifference.QLearning(environment, 0.1, 1.0, 0.1, 5000000)
+
+
+    for (g <- policy.groupBy { case (BlackJackState(_, v, _), _) => v }) {
+      val (usableAce, m) = g
+      println(usableAce)
+      for (groupedByCurrentSum <- m.groupBy { case (BlackJackState(c, _, _), _) => c }.toSeq.sortBy(_._1).reverse) {
+        val sortedByDealersHand = groupedByCurrentSum._2.toSeq.sortBy { case (BlackJackState(_, _, d), _) => d }
+        val actionsString = sortedByDealersHand.map(_._2).map {
+          case Stick => "s"
+          case Hit => " "
+        }.mkString(" ")
+        println(s"${groupedByCurrentSum._1}: $actionsString")
+      }
+    }
   }
   it should "execute SARSA on gridworld" in {
     val rows = 5
     val cols = 5
     val environment = KnownEnvironmentWrapper(GridWorldEnvironment(rows, cols))
-    val policy = TemporalDifference.SARSA(environment, 0.1, 1.0, 0.5, 1000)
+    val policy = TemporalDifference.SARSA(environment, 0.1, 1.0, 0.5, 10)
 
-    val str = (0 until rows).map { r => (0 until cols).map(c => r * cols + c).map(policy.getOrElse(_, "")).mkString("\t") }.mkString("\n")
-    println(str)
+    //    val str = (0 until rows).map { r => (0 until cols).map(c => r * cols + c).map(policy.getOrElse(_, "")).mkString("\t") }.mkString("\n")
+    //    println(str)
+  }
+  it should "execute SARSA on windy gridworld" in {
+    val rows = 7
+    val wind = List(0, 0, 0, 1, 1, 1, 2, 2, 1, 0)
+    val cols = wind.length
+    val environment = new WindyGridWorldEnvironment(rows, wind, 30, 37)
+    val policy = TemporalDifference.SARSA(environment, 0.1, 1.0, 0.5, 10)
+
+    //    val str = (0 until rows).map { r => (0 until cols).map(c => r * cols + c).map(policy.getOrElse(_, "")).mkString("\t") }.mkString("\n")
+    //    println(str)
   }
 }

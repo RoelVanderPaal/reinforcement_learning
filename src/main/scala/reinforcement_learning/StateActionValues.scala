@@ -30,5 +30,7 @@ class StateActionValues[State, Action] {
 
   def greedyPolicy: collection.Map[State, Action] = valuePerStateAndAction.mapValues(ArgMax.argMax(_))
 
+  def maxReward(s: State): Double = valuePerStateAndAction.get(s).map(_.values.max).getOrElse(0.0)
+
   def rewards: collection.Map[State, mutable.Map[Action, Reward]] = valuePerStateAndAction
 }
