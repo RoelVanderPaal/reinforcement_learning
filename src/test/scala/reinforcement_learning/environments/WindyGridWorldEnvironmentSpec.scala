@@ -1,9 +1,7 @@
-package reinforcement_learning.known_environments
+package reinforcement_learning.environments
 
 import org.scalatest.{FlatSpec, Matchers}
-import reinforcement_learning.environments.WindyGridWorldEnvironment
-
-import GridWorldAction._
+import reinforcement_learning.known_environments.GridWorldAction.Right
 
 class WindyGridWorldEnvironmentSpec extends FlatSpec with Matchers {
   "A WindyGridWorld" should "work corectly" in {
